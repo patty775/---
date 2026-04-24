@@ -3,18 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>露娜巨蟹塔羅 - 78張全方位占卜</title>
+    <title>露娜巨蟹塔羅 🌸 靈魂之鏡</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <!-- 導入最美圓體：Zen Maru Gothic -->
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%);
-            color: #f8fafc;
-            font-family: 'Noto Serif TC', serif;
-            min-height: 100vh;
+        :root {
+            --bg-petal: #FFFBFC; 
+            --soft-rose: #FFE5EC; 
+            --deep-petal: #FB6F92; 
+            --text-main: #6D5959;
         }
-        .title-font { font-family: 'Cinzel', serif; }
-        .tarot-card { perspective: 1000px; width: 120px; height: 200px; }
+
+        body {
+            background: linear-gradient(145deg, #FFFBFC 0%, #FFF0F3 100%);
+            color: var(--text-main);
+            font-family: 'Zen Maru Gothic', sans-serif;
+            min-height: 100vh;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        /* 縮小成一排的簡介 */
+        .intro-line {
+            font-size: 0.85rem;
+            white-space: nowrap;
+            letter-spacing: 0.05em;
+            color: #B5A4A4;
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* 塔羅牌視覺樣式 */
+        .tarot-card { perspective: 1000px; width: 160px; height: 280px; }
         .card-inner {
             position: relative; width: 100%; height: 100%;
             transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
@@ -24,171 +45,202 @@
         .card-front, .card-back {
             position: absolute; width: 100%; height: 100%;
             backface-visibility: hidden; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center; flex-direction: column;
+            border: 2px solid var(--soft-rose);
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
         .card-back {
-            background: #1e293b; border: 2px solid #d4af37;
-            background-image: url('https://www.transparenttextures.com/patterns/p6.png');
+            background: #FFFFFF;
+            background-image: radial-gradient(var(--soft-rose) 1.5px, transparent 1.5px);
+            background-size: 15px 15px;
         }
-        .card-front {
-            background: #ffffff; color: #1e293b; transform: rotateY(180deg);
-            border: 3px solid #d4af37; padding: 10px; text-align: center;
+        .card-front { background: #fff; transform: rotateY(180deg); }
+        .reversed-img { transform: rotate(180deg); }
+
+        /* 字體比例設定 */
+        .body-text { font-size: 1.1rem; } 
+        /* 卡牌標題設定為內文的 2 倍大 */
+        .card-name-title { 
+            font-size: 2.2rem; 
+            font-weight: 700; 
+            color: var(--deep-petal);
+            line-height: 1.2;
+            margin-bottom: 15px;
         }
-        .reversed { transform: rotateX(180deg); }
-        .fade-in { animation: fadeIn 1s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn-luna {
+            background: var(--soft-rose);
+            color: #8D7373;
+            border-radius: 100px;
+            transition: all 0.3s;
+        }
+        .btn-luna:hover:not(:disabled) {
+            background: var(--deep-petal);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .report-box {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 40px;
+            border: 1px solid var(--soft-rose);
+            box-shadow: 0 10px 40px rgba(255, 182, 193, 0.1);
+        }
     </style>
 </head>
 <body class="p-4 md:p-10">
 
-    <div class="max-w-5xl mx-auto text-center">
-        <header class="mb-10 fade-in">
-            <h1 class="text-4xl md:text-6xl font-bold text-amber-500 title-font mb-4 tracking-tighter">LUNA CANCER TAROT</h1>
-            <p class="text-amber-200 text-lg italic">「塔羅是一面映照內心的鏡子，看見潛意識的答案。」</p>
+    <div class="max-w-4xl mx-auto text-center">
+        <!-- 頁首區 -->
+        <header class="mb-10">
+            <h1 class="text-5xl font-bold text-[#E5989B] mb-2">露娜巨蟹塔羅</h1>
+            <p class="intro-line">塔羅牌是一面映照內心的鏡子。透過牌義，我們看見潛意識的答案，找到前行的力量與方向。</p>
         </header>
 
-        <!-- 介面設定 -->
-        <div class="bg-slate-900/80 p-6 rounded-3xl border border-amber-900/30 shadow-2xl mb-10 fade-in">
-            <div class="flex flex-wrap justify-center gap-4 mb-6">
-                <button onclick="setMode('single')" id="btn-single" class="mode-btn px-6 py-2 rounded-full border border-amber-600 bg-amber-600/20 text-amber-200">單張占卜</button>
-                <button onclick="setMode('triple')" id="btn-triple" class="mode-btn px-6 py-2 rounded-full border border-slate-700 text-slate-400">聖三角牌陣</button>
+        <!-- 操作介面 -->
+        <div class="bg-white/60 p-8 rounded-[40px] border border-white mb-12">
+            <div class="flex justify-center gap-4 mb-8">
+                <button onclick="setMode('single')" id="m-single" class="px-6 py-2 rounded-full bg-[#FFE5EC] text-[#7A6A6A] font-bold text-sm shadow-sm">單張占卜</button>
+                <button onclick="setMode('triple')" id="m-triple" class="px-6 py-2 rounded-full bg-white text-gray-400 font-bold text-sm border border-[#F1F3F5]">聖三角牌陣</button>
             </div>
-            
-            <textarea id="question" rows="2" placeholder="請詳細輸入您的問題（例如：我與對象未來的感情發展？）" 
-                      class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white focus:border-amber-600 outline-none transition-all mb-4"></textarea>
-            
-            <button onclick="drawTarot()" id="drawBtn" class="w-full md:w-64 bg-amber-700 hover:bg-amber-600 text-white font-bold py-4 rounded-2xl transition-all shadow-lg active:scale-95">
-                開啟靈魂連結
-            </button>
+            <textarea id="question" rows="2" placeholder="輕輕寫下你想解決的問題..." class="w-full p-6 rounded-3xl border-2 border-[#FFE5EC] outline-none focus:border-[#FB6F92] body-text mb-6"></textarea>
+            <!-- 按鈕已改為：翻開靈魂之鏡 -->
+            <button onclick="drawCards()" id="drawBtn" class="btn-luna px-16 py-4 text-2xl font-bold">翻開靈魂之鏡</button>
         </div>
 
-        <!-- 牌面區 -->
-        <div id="cardStage" class="flex flex-wrap justify-center gap-6 mb-12"></div>
+        <!-- 牌區 -->
+        <div id="cardStage" class="flex flex-wrap justify-center gap-8 mb-16"></div>
 
-        <!-- 結果報告 -->
-        <div id="resultBox" class="hidden fade-in bg-slate-900/90 p-8 rounded-[2rem] border border-amber-900/20 text-left shadow-2xl">
-            <h3 class="text-2xl text-amber-500 font-bold mb-6 border-b border-amber-900/20 pb-4">露娜的解答報告</h3>
-            <div id="analysis" class="space-y-8 leading-loose text-gray-200"></div>
-            <button onclick="location.reload()" class="mt-10 block mx-auto text-amber-700 underline">結束占卜</button>
+        <!-- 解讀區 -->
+        <div id="reportBox" class="hidden report-box p-8 md:p-16 text-left">
+            <h3 class="text-3xl text-[#E5989B] font-bold mb-12 text-center">🌸 靈魂鏡像導航報告 🌸</h3>
+            <div id="analysisArea" class="space-y-20"></div>
+            <div class="mt-20 text-center">
+                <button onclick="location.reload()" class="text-[#B5A4A4] underline text-sm">重啟對話，再次感應</button>
+            </div>
         </div>
     </div>
 
     <script>
-        let currentMode = 'single';
-        
-        // 1. 建立完整 78 張牌庫
-        const majorArcana = [
-            "愚者", "魔術師", "女教皇", "女皇", "皇帝", "教皇", "戀人", "戰車", "力量", "隱士", 
-            "命運之輪", "正義", "倒吊人", "死神", "節制", "惡魔", "高塔", "星星", "月亮", "太陽", "審判", "世界"
-        ];
-        const suits = ["權杖", "聖杯", "寶劍", "錢幣"];
-        const ranks = ["Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "隨從", "騎士", "皇后", "國王"];
-        
-        const fullDeck = [];
-        majorArcana.forEach((name, i) => fullDeck.push({ id: `M${i}`, name, type: "大阿爾卡納" }));
-        suits.forEach(suit => {
-            ranks.forEach((rank, i) => fullDeck.push({ id: suit[0]+i, name: suit + rank, type: suit }));
+        let mode = 'single';
+        const deck = [];
+        const zhMajors = ["愚者", "魔術師", "女教皇", "女皇", "皇帝", "教皇", "戀人", "戰車", "力量", "隱士", "命運之輪", "正義", "倒吊人", "死神", "節制", "惡魔", "高塔", "星星", "月亮", "太陽", "審判", "世界"];
+        const zhSuits = ["權杖", "聖杯", "寶劍", "錢幣"];
+
+        // 初始化 78 張牌庫
+        for(let i=0; i<22; i++) {
+            deck.push({ name: zhMajors[i], img: `https://raw.githubusercontent.com/gaoge0110/tarot/master/public/cards-min/m${i}.jpg` });
+        }
+        const suitCodes = ['w', 'c', 's', 'p'];
+        zhSuits.forEach((s, si) => {
+            for(let n=1; n<=14; n++) {
+                let rank = n;
+                if(n===1) rank="Ace"; else if(n===11) rank="隨從"; else if(n===12) rank="騎士"; else if(n===13) rank="皇后"; else if(n===14) rank="國王";
+                deck.push({ name: s+rank, img: `https://raw.githubusercontent.com/gaoge0110/tarot/master/public/cards-min/${suitCodes[si]}${n}.jpg` });
+            }
         });
 
-        // 2. 核心解讀邏輯（對應 78 張牌的不同情境）
-        const meanings = {
-            "感情": { up: "象徵情感的流動與和諧，代表正向的連結。", rev: "情感溝通受阻，存在誤解或過度執著。" },
-            "事業": { up: "代表計畫順利執行，具備成功的潛力與行動力。", rev: "遇到職場瓶頸，需重新評估目前的策略。" },
-            "財運": { up: "物質狀況穩定，適合進行長遠的理財規劃。", rev: "財務支出過多，應警惕不必要的開銷。" },
-            "通用": { up: "代表能量正位，萬事具備，只需保持信心。", rev: "能量逆流，需內省並調整步調，暫緩行動。" }
-        };
-
         function setMode(m) {
-            currentMode = m;
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.replace('border-amber-600', 'border-slate-700'));
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.replace('text-amber-200', 'text-slate-400'));
-            document.getElementById('btn-' + m).classList.replace('border-slate-700', 'border-amber-600');
-            document.getElementById('btn-' + m).classList.replace('text-slate-400', 'text-amber-200');
+            mode = m;
+            const activeClass = "px-8 py-2 rounded-full bg-[#FFE5EC] text-[#7A6A6A] font-bold text-sm shadow-sm";
+            const inactiveClass = "px-8 py-2 rounded-full bg-white text-gray-400 font-bold text-sm border border-[#F1F3F5]";
+            document.getElementById('m-single').className = m === 'single' ? activeClass : inactiveClass;
+            document.getElementById('m-triple').className = m === 'triple' ? activeClass : inactiveClass;
         }
 
-        function drawTarot() {
+        function drawCards() {
             const q = document.getElementById('question').value;
-            if(!q) return alert("請先輸入您的問題...");
+            if(!q) return alert("要讓露娜知道你的困惑，靈魂之鏡才能顯現答案喔。🍭");
             
             document.getElementById('drawBtn').disabled = true;
-            const stage = document.getElementById('cardStage');
-            stage.innerHTML = "";
-            document.getElementById('resultBox').classList.add('hidden');
+            const stage = document.getElementById('cardStage'); stage.innerHTML = "";
+            document.getElementById('reportBox').classList.add('hidden');
 
-            const count = currentMode === 'single' ? 1 : 3;
+            const count = mode === 'single' ? 1 : 3;
             const selected = [];
-            const tempDeck = [...fullDeck];
+            const tempDeck = [...deck];
 
             for(let i=0; i<count; i++) {
-                const rIdx = Math.floor(Math.random() * tempDeck.length);
-                const card = tempDeck.splice(rIdx, 1)[0];
-                card.isRev = Math.random() > 0.7; // 30% 逆位率
+                const idx = Math.floor(Math.random() * tempDeck.length);
+                const card = tempDeck.splice(idx, 1)[0];
+                card.isRev = Math.random() > 0.4;
                 selected.push(card);
             }
 
             selected.forEach((card, i) => {
-                const cardEl = document.createElement('div');
-                cardEl.className = "tarot-card fade-in";
-                cardEl.style.animationDelay = `${i * 0.4}s`;
-                cardEl.innerHTML = `
-                    <div class="card-inner" id="inner-${i}">
+                const div = document.createElement('div');
+                div.className = "tarot-card";
+                div.innerHTML = `
+                    <div class="card-inner" id="c-${i}">
                         <div class="card-back"></div>
-                        <div class="card-front ${card.isRev ? 'reversed' : ''}">
-                            <p class="text-[8px] text-amber-800 mb-2 tracking-widest">LUNA CANCER</p>
-                            <p class="font-bold text-sm">${card.name}</p>
-                            <p class="text-[10px] mt-auto text-gray-400">${card.isRev ? '逆位' : '正位'}</p>
+                        <div class="card-front">
+                            <img src="${card.img}" class="w-full h-full object-cover ${card.isRev ? 'reversed-img' : ''}" onerror="this.src='https://placehold.co/160x280?text=Luna+Tarot'">
                         </div>
                     </div>
                 `;
-                stage.appendChild(cardEl);
-                setTimeout(() => document.getElementById(`inner-${i}`).classList.add('flipped'), 1000 + (i*500));
+                stage.appendChild(div);
+                setTimeout(() => document.getElementById(`c-${i}`).classList.add('flipped'), 500 + i*500);
             });
 
-            setTimeout(() => generateReading(q, selected), 2500 + (count * 500));
+            setTimeout(() => showSolution(q, selected), 2000 + count*500);
         }
 
-        function generateReading(q, cards) {
-            let field = "通用";
-            if(q.match(/愛|情|伴|婚|他|她/)) field = "感情";
-            else if(q.match(/職|工|業|薪|升/)) field = "事業";
-            else if(q.match(/錢|財|金|投/)) field = "財運";
+        function showSolution(q, cards) {
+            const area = document.getElementById('analysisArea');
+            document.getElementById('reportBox').classList.remove('hidden');
 
-            const analysis = document.getElementById('analysis');
-            document.getElementById('resultBox').classList.remove('hidden');
-
-            let html = `<div class="p-4 bg-amber-900/10 rounded-xl border-l-4 border-amber-600 mb-6 italic text-amber-200">
-                問卜：${q}
+            let html = `<div class="bg-[#FFF9FA] p-8 rounded-3xl text-pink-500 italic mb-12 text-center border border-[#FFE5EC] body-text">
+                「關於您的問題：${q}」<br>靈魂之鏡已映照出前行的方向...
             </div>`;
 
             cards.forEach((card, i) => {
-                const label = currentMode === 'single' ? "【核心牌義】" : ["【過去/起因】", "【現在/狀態】", "【未來/結果】"][i];
-                const cardMeaning = card.isRev ? meanings[field].rev : meanings[field].up;
+                const step = mode === 'single' ? '核心啟示' : ['問題的根源', '目前的突破口', '未來的解決路徑'][i];
                 
                 html += `
-                    <div class="mb-6">
-                        <h4 class="text-xl text-amber-400 font-bold mb-2">${label} - ${card.name} (${card.isRev ? '逆位' : '正位'})</h4>
-                        <p class="text-gray-300">
-                            這張牌屬於「${card.type}」。在${field}層面上，它暗示著：${cardMeaning} 
-                            ${card.type.includes('權杖') ? '權杖代表行動力，你需要更多的執行力來面對這個情況。' : ''}
-                            ${card.type.includes('聖杯') ? '聖杯代表情緒，這件事與你的內心感受息息相關。' : ''}
-                            ${card.type.includes('寶劍') ? '寶劍代表理智，請保持頭腦清醒，切勿感情用事。' : ''}
-                            ${card.type.includes('錢幣') ? '錢幣代表現實，請關注物質層面的穩定與基礎。' : ''}
-                        </p>
+                <div class="space-y-8 pb-16 border-b border-[#FDF2F4] last:border-0">
+                    <h4 class="card-name-title">${step}：${card.name} (${card.isRev ? '逆位' : '正位'})</h4>
+                    
+                    <div class="space-y-8 body-text text-[#6D5959]">
+                        <section>
+                            <h5 class="font-bold text-[#E5989B] text-xl mb-3">📍 現況映射：</h5>
+                            <p>這張牌顯示出你目前正被一種${card.isRev ? '能量停滯或方向偏差' : '具有強大支持且穩定'}的頻率所包圍。${card.isRev ? '這代表你現在的心力可能放在了錯誤的地方，或是在重複某個無效的循環。這面鏡子在提醒你，外在的阻礙其實源於內在的未竟之志。' : '這是一個非常明亮的信號，代表你目前的努力都在正確的軌道上。你所擔心的問題，其實已經具備了成功的基因，只需等待時間的催化。'}</p>
+                        </section>
+
+                        <section>
+                            <h5 class="font-bold text-[#E5989B] text-xl mb-3">🛠️ 實戰突破策略（怎麼做？）：</h5>
+                            <p>針對這個情況，露娜建議你：${card.isRev ? '「學會留白」就是最強大的解決之道。不要急著去修補或改變結果，現在適合收回你的能量，進行一次心理上的斷捨離。當你不再執著於控制，事情反而會因為你的放鬆而出現轉機。' : '「果斷執行」是目前的唯一捷徑。這張牌要求你把想法轉化為行動，不論是主動溝通還是提交計畫，現在的勝算非常高。你不需要完美的計畫，只需要踏出第一步的勇氣。'} </p>
+                        </section>
+
+                        <section>
+                            <h5 class="font-bold text-[#E5989B] text-xl mb-3">🧘 心理建設建議：</h5>
+                            <p>${card.isRev ? '請對自己溫柔一點。現在的「不順」其實是宇宙在幫你剔除不適合的東西，它是為了保護你。試著把焦點轉回自己身上，照顧好自己的情緒，就是對未來最好的投資。' : '請保持那份最初的熱情。這張牌在肯定你的價值，它是靈魂在對你微笑。保持開放的心態，好運自然會被你那份正向的頻率吸引而來。'}</p>
+                        </section>
+
+                        <section class="bg-[#FFFDFD] p-8 rounded-3xl border border-[#FFE5EC]">
+                            <h5 class="font-bold text-[#D4A5A5] mb-4 text-xl">✅ 今日實踐清單（立刻做的三件事）：</h5>
+                            <ul class="list-disc pl-8 space-y-3 text-[#8E7E7E]">
+                                <li>${card.isRev ? '主動拒絕一個讓你感到內耗的請求或聚會。' : '聯絡一個能直接給予你具體幫助的關鍵人物。'}</li>
+                                <li>${card.isRev ? '整理你的個人空間，特別是丟掉一件不再需要的舊物品。' : '在今天下午三點前，完成一個你拖延最久的小任務。'}</li>
+                                <li>${card.isRev ? '比平常早睡一小時，並在睡前聽十分鐘的助眠音樂。' : '看著鏡子對自己說三次：「我有能力創造我想要的未來」。'}</li>
+                            </ul>
+                        </section>
                     </div>
-                `;
+                </div>`;
             });
 
-            if(currentMode === 'triple') {
-                html += `<div class="mt-8 p-6 bg-slate-800 rounded-2xl border border-amber-900/40">
-                    <h4 class="text-amber-500 font-bold mb-2">露娜的綜合導航</h4>
-                    <p>這三張牌的流動顯示，你目前正處於從「${cards[0].name}」到「${cards[2].name}」的轉變中。
-                    ${cards[2].isRev ? '未來尚有變數，請在當下謹慎行事，多聽取他人建議。' : '這是一個充滿希望的信號，只要維持現狀，目標終將達成。'}
-                    </p>
+            if(mode === 'triple') {
+                html += `
+                <div class="bg-[#FFE5EC]/40 p-10 rounded-[50px] text-center mt-12 border-2 border-white shadow-sm">
+                    <h4 class="text-[#E5989B] font-bold mb-6 text-3xl">🌟 靈魂能量最終導航</h4>
+                    <p class="text-xl text-[#8E7E7E]">從這三張牌的流動來看，這是一場從「${cards[0].name}」的積累轉化到「${cards[2].name}」的具體成果的旅程。不要被眼前的迷霧遮蔽了雙眼，露娜會一直陪伴著你，直到你重拾內心的力量。🌿</p>
                 </div>`;
             }
 
-            analysis.innerHTML = html;
+            area.innerHTML = html;
             document.getElementById('drawBtn').disabled = false;
+            setTimeout(() => {
+                document.getElementById('reportBox').scrollIntoView({ behavior: 'smooth' });
+            }, 500);
         }
     </script>
 </body>
