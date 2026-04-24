@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>露娜巨蟹塔羅 - 78張全方位占卜</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%);
+            color: #f8fafc;
+            font-family: 'Noto Serif TC', serif;
+            min-height: 100vh;
+        }
+        .title-font { font-family: 'Cinzel', serif; }
+        .tarot-card { perspective: 1000px; width: 120px; height: 200px; }
+        .card-inner {
+            position: relative; width: 100%; height: 100%;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d; cursor: pointer;
+        }
+        .card-inner.flipped { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; flex-direction: column;
+        }
+        .card-back {
+            background: #1e293b; border: 2px solid #d4af37;
+            background-image: url('https://www.transparenttextures.com/patterns/p6.png');
+        }
+        .card-front {
+            background: #ffffff; color: #1e293b; transform: rotateY(180deg);
+            border: 3px solid #d4af37; padding: 10px; text-align: center;
+        }
+        .reversed { transform: rotateX(180deg); }
+        .fade-in { animation: fadeIn 1s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="max-w-5xl mx-auto text-center">
+        <header class="mb-10 fade-in">
+            <h1 class="text-4xl md:text-6xl font-bold text-amber-500 title-font mb-4 tracking-tighter">LUNA CANCER TAROT</h1>
+            <p class="text-amber-200 text-lg italic">「塔羅是一面映照內心的鏡子，看見潛意識的答案。」</p>
+        </header>
+
+        <!-- 介面設定 -->
+        <div class="bg-slate-900/80 p-6 rounded-3xl border border-amber-900/30 shadow-2xl mb-10 fade-in">
+            <div class="flex flex-wrap justify-center gap-4 mb-6">
+                <button onclick="setMode('single')" id="btn-single" class="mode-btn px-6 py-2 rounded-full border border-amber-600 bg-amber-600/20 text-amber-200">單張占卜</button>
+                <button onclick="setMode('triple')" id="btn-triple" class="mode-btn px-6 py-2 rounded-full border border-slate-700 text-slate-400">聖三角牌陣</button>
+            </div>
+            
+            <textarea id="question" rows="2" placeholder="請詳細輸入您的問題（例如：我與對象未來的感情發展？）" 
+                      class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white focus:border-amber-600 outline-none transition-all mb-4"></textarea>
+            
+            <button onclick="drawTarot()" id="drawBtn" class="w-full md:w-64 bg-amber-700 hover:bg-amber-600 text-white font-bold py-4 rounded-2xl transition-all shadow-lg active:scale-95">
+                開啟靈魂連結
+            </button>
+        </div>
+
+        <!-- 牌面區 -->
+        <div id="cardStage" class="flex flex-wrap justify-center gap-6 mb-12"></div>
+
+        <!-- 結果報告 -->
+        <div id="resultBox" class="hidden fade-in bg-slate-900/90 p-8 rounded-[2rem] border border-amber-900/20 text-left shadow-2xl">
+            <h3 class="text-2xl text-amber-500 font-bold mb-6 border-b border-amber-900/20 pb-4">露娜的解答報告</h3>
+            <div id="analysis" class="space-y-8 leading-loose text-gray-200"></div>
+            <button onclick="location.reload()" class="mt-10 block mx-auto text-amber-700 underline">結束占卜</button>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 'single';
+        
+        // 1. 建立完整 78 張牌庫
+        const majorArcana = [
+            "愚者", "魔術師", "女教皇", "女皇", "皇帝", "教皇", "戀人", "戰車", "力量", "隱士", 
+            "命運之輪", "正義", "倒吊人", "死神", "節制", "惡魔", "高塔", "星星", "月亮", "太陽", "審判", "世界"
+        ];
+        const suits = ["權杖", "聖杯", "寶劍", "錢幣"];
+        const ranks = ["Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "隨從", "騎士", "皇后", "國王"];
+        
+        const fullDeck = [];
+        majorArcana.forEach((name, i) => fullDeck.push({ id: `M${i}`, name, type: "大阿爾卡納" }));
+        suits.forEach(suit => {
+            ranks.forEach((rank, i) => fullDeck.push({ id: suit[0]+i, name: suit + rank, type: suit }));
+        });
+
+        // 2. 核心解讀邏輯（對應 78 張牌的不同情境）
+        const meanings = {
+            "感情": { up: "象徵情感的流動與和諧，代表正向的連結。", rev: "情感溝通受阻，存在誤解或過度執著。" },
+            "事業": { up: "代表計畫順利執行，具備成功的潛力與行動力。", rev: "遇到職場瓶頸，需重新評估目前的策略。" },
+            "財運": { up: "物質狀況穩定，適合進行長遠的理財規劃。", rev: "財務支出過多，應警惕不必要的開銷。" },
+            "通用": { up: "代表能量正位，萬事具備，只需保持信心。", rev: "能量逆流，需內省並調整步調，暫緩行動。" }
+        };
+
+        function setMode(m) {
+            currentMode = m;
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.replace('border-amber-600', 'border-slate-700'));
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.replace('text-amber-200', 'text-slate-400'));
+            document.getElementById('btn-' + m).classList.replace('border-slate-700', 'border-amber-600');
+            document.getElementById('btn-' + m).classList.replace('text-slate-400', 'text-amber-200');
+        }
+
+        function drawTarot() {
+            const q = document.getElementById('question').value;
+            if(!q) return alert("請先輸入您的問題...");
+            
+            document.getElementById('drawBtn').disabled = true;
+            const stage = document.getElementById('cardStage');
+            stage.innerHTML = "";
+            document.getElementById('resultBox').classList.add('hidden');
+
+            const count = currentMode === 'single' ? 1 : 3;
+            const selected = [];
+            const tempDeck = [...fullDeck];
+
+            for(let i=0; i<count; i++) {
+                const rIdx = Math.floor(Math.random() * tempDeck.length);
+                const card = tempDeck.splice(rIdx, 1)[0];
+                card.isRev = Math.random() > 0.7; // 30% 逆位率
+                selected.push(card);
+            }
+
+            selected.forEach((card, i) => {
+                const cardEl = document.createElement('div');
+                cardEl.className = "tarot-card fade-in";
+                cardEl.style.animationDelay = `${i * 0.4}s`;
+                cardEl.innerHTML = `
+                    <div class="card-inner" id="inner-${i}">
+                        <div class="card-back"></div>
+                        <div class="card-front ${card.isRev ? 'reversed' : ''}">
+                            <p class="text-[8px] text-amber-800 mb-2 tracking-widest">LUNA CANCER</p>
+                            <p class="font-bold text-sm">${card.name}</p>
+                            <p class="text-[10px] mt-auto text-gray-400">${card.isRev ? '逆位' : '正位'}</p>
+                        </div>
+                    </div>
+                `;
+                stage.appendChild(cardEl);
+                setTimeout(() => document.getElementById(`inner-${i}`).classList.add('flipped'), 1000 + (i*500));
+            });
+
+            setTimeout(() => generateReading(q, selected), 2500 + (count * 500));
+        }
+
+        function generateReading(q, cards) {
+            let field = "通用";
+            if(q.match(/愛|情|伴|婚|他|她/)) field = "感情";
+            else if(q.match(/職|工|業|薪|升/)) field = "事業";
+            else if(q.match(/錢|財|金|投/)) field = "財運";
+
+            const analysis = document.getElementById('analysis');
+            document.getElementById('resultBox').classList.remove('hidden');
+
+            let html = `<div class="p-4 bg-amber-900/10 rounded-xl border-l-4 border-amber-600 mb-6 italic text-amber-200">
+                問卜：${q}
+            </div>`;
+
+            cards.forEach((card, i) => {
+                const label = currentMode === 'single' ? "【核心牌義】" : ["【過去/起因】", "【現在/狀態】", "【未來/結果】"][i];
+                const cardMeaning = card.isRev ? meanings[field].rev : meanings[field].up;
+                
+                html += `
+                    <div class="mb-6">
+                        <h4 class="text-xl text-amber-400 font-bold mb-2">${label} - ${card.name} (${card.isRev ? '逆位' : '正位'})</h4>
+                        <p class="text-gray-300">
+                            這張牌屬於「${card.type}」。在${field}層面上，它暗示著：${cardMeaning} 
+                            ${card.type.includes('權杖') ? '權杖代表行動力，你需要更多的執行力來面對這個情況。' : ''}
+                            ${card.type.includes('聖杯') ? '聖杯代表情緒，這件事與你的內心感受息息相關。' : ''}
+                            ${card.type.includes('寶劍') ? '寶劍代表理智，請保持頭腦清醒，切勿感情用事。' : ''}
+                            ${card.type.includes('錢幣') ? '錢幣代表現實，請關注物質層面的穩定與基礎。' : ''}
+                        </p>
+                    </div>
+                `;
+            });
+
+            if(currentMode === 'triple') {
+                html += `<div class="mt-8 p-6 bg-slate-800 rounded-2xl border border-amber-900/40">
+                    <h4 class="text-amber-500 font-bold mb-2">露娜的綜合導航</h4>
+                    <p>這三張牌的流動顯示，你目前正處於從「${cards[0].name}」到「${cards[2].name}」的轉變中。
+                    ${cards[2].isRev ? '未來尚有變數，請在當下謹慎行事，多聽取他人建議。' : '這是一個充滿希望的信號，只要維持現狀，目標終將達成。'}
+                    </p>
+                </div>`;
+            }
+
+            analysis.innerHTML = html;
+            document.getElementById('drawBtn').disabled = false;
+        }
+    </script>
+</body>
+</html>
